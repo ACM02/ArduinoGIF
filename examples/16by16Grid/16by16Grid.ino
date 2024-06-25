@@ -1,10 +1,10 @@
 #include <NeoPixel_Animator.h>
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 11                    // the pin the LED strip Data comes out
+#define PIN 11                        // the pin the LED strip Data comes out
 #define numPixels 16*16+4             //  The length of the led strip
-#define NUM_FRAMES 4                  // The number of frames in the animation, should probably make this a property of the animation class
-#define FRAME_SIZE 16*16              // The size of the frames in the animation, should probably make this a property of the animation class too
+#define NUM_FRAMES 4                  // The number of frames in the animation
+#define FRAME_SIZE 16*16              // The size of the frames in the animation
 
 //  This describes the information the NeoPixel functions needs, then sets the values
 // Parameter 1 = number of pixels in strip
@@ -17,7 +17,7 @@
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(numPixels, PIN, NEO_RGB + NEO_KHZ800);
 
 // Start of 16x16 frames, each is a 256 element array of 0x00RRGGBB values representing a pixel
-const uint32_t pixil_frame_0[] PROGMEM = {
+const uint32_t frame0[] PROGMEM = {
   0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
@@ -35,7 +35,7 @@ const uint32_t pixil_frame_0[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c
 };
-const uint32_t pixil_frame_1[] PROGMEM = {
+const uint32_t frame1[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
@@ -54,7 +54,7 @@ const uint32_t pixil_frame_1[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 };
 
-const uint32_t pixil_frame_2[] PROGMEM = {
+const uint32_t frame2[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x22b14c, 0x000000, 0x000000, 
@@ -73,7 +73,7 @@ const uint32_t pixil_frame_2[] PROGMEM = {
   0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 };
 
-const uint32_t pixil_frame_3[] PROGMEM = {
+const uint32_t frame3[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
@@ -92,21 +92,33 @@ const uint32_t pixil_frame_3[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 };
 
-const uint32_t *const frames[] PROGMEM = {pixil_frame_0, pixil_frame_1, pixil_frame_2, pixil_frame_3};
+/*
+ Syntax here is a little confusing but this is a constant array of pointers pointing to constant 32 bit integers. 
+ All you need to worry about though is putting the variables for the frames into this array, in the order you want them played.
+*/
+const uint32_t *const frames[] PROGMEM = {frame0, frame1, frame2, frame3};
 
-Animation animation = Animation(strip, frames, 4, FRAME_SIZE, NUM_FRAMES);
+/*
+ Declare an animation, we need to give it:
+ - A Adafruit_NeoPixel strip to write to
+ - An array containing pointers to the frames we want to write, in the order they will be played
+ - The number of frames in the animation 
+ - The size of the frames in the animation in number of pixels (ie. 16x16 frames will be 256 pixels)
+ - The pixel number to start drawing at, for if you want to start drawing the animation at the nth pixel.
+*/
+Animation animation = Animation(strip, frames, NUM_FRAMES, FRAME_SIZE, 4);
 
 void setup() {
   strip.begin();
-  strip.setBrightness(10);
-  // put your setup code here, to run once:
+  strip.setBrightness(10); // Set the brightness to be low so this can be run without an external power supply
   strip.show();
-  Serial.begin(9600);
-  
 }
 
 void loop() {
+  // Write the next frame to using the animator
   animation.update();
+  // Show the frame on the strip
   strip.show();
+  // 500ms delay = 2fps (frames per second)
   delay(500);
 }

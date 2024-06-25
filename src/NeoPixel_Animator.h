@@ -1,5 +1,5 @@
-#ifndef __NEOPIXEL_ANIMATOR__
-#define __NEOPIXEL_ANIMATOR__
+#ifndef Animator_h
+#define Animator_h
 class Adafruit_NeoPixel;
 
 // Class that handles animating a collection of frames using am Adafruit_NeoPixel object
@@ -19,8 +19,8 @@ class Animation {
       PARAM f: An array in program memory of pointers to frames stored in program memory 
       PARAM starting pixel: The pixel to start drawing at 
     */
-    Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int startingPixel, int frameSize, int numFrames);
-    void update();
+    Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int numFrames, int frameSize, int startingPixel);
+    void writeNextFrame();
     ~Animation();
 };
 #endif
