@@ -1,5 +1,5 @@
-#include <Adafruit_NeoPixel.h>    // library of functions to control the LED strip
-#include <avr/pgmspace.h>         // Library for accessing program memory
+#include <NeoPixel_Animator.h>
+#include <Adafruit_NeoPixel.h>
 
 #define PIN 11                    // the pin the LED strip Data comes out
 #define numPixels 16*16+4             //  The length of the led strip
@@ -92,120 +92,20 @@ const uint32_t pixil_frame_3[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 };
 
-// Class that handles animating a collection of frames using am Adafruit_NeoPixel object
-class Animation {
-  private:
-    Adafruit_NeoPixel* pixels; // The NeoPixel object we will use to write to the lights
-    uint32_t* frames[NUM_FRAMES]; // An array of pointers to the frames in the animation 
-    int startingPixel; // The pixel in the NeoPixel to start drawing at (ex: 4 will skip the first 4 pixels)
-    int lastFrame; // The last frame we animated for this animation 
-  public:
-
-    /*
-      Constructs an animation
-      PARAM p: An Adafruit_NeoPixel object to use to write to a light strip
-      PARAM f: An array in program memory of pointers to frames stored in program memory 
-      PARAM starting pixel: The pixel to start drawing at 
-    */
-    Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int startingPixel) {
-      this->pixels = &p;
-      for (int i = 0; i < NUM_FRAMES; i++) {
-        frames[i] = pgm_read_ptr(&f[i]); // Read the pointers to the frames from program memory, and store them in this object 
-      }
-      this->startingPixel = startingPixel;
-      this->lastFrame=0;
-    }
-
-    void update() {
-      this->lastFrame++; // Increment the frame to display 
-      if (this->lastFrame == NUM_FRAMES) {
-        this->lastFrame = 0;
-      }
-      Serial.print("Frame:");
-      Serial.println(lastFrame);
-      const uint32_t* img = frames[this->lastFrame]; // Get the pointer to the frame to display 
-      for (int i = 0; i < FRAME_SIZE; i++) { // Loop through the pixels in the frame
-        uint32_t value = pgm_read_dword_near(&img[i]); // Read the 32bit value in program memory representing a pixel
-        int red = (value & 0xff0000) >> 16; // Parse the red value in the pixel using a bit mask and bit shifting
-        int green = (value & 0x00ff00) >> 8; // Parse green
-        int blue = (value & 0x0000ff); // Parse blue
-        Serial.println(i);
-        Serial.println(red);
-        Serial.println(green);
-        Serial.println(blue);
-        this->pixels->setPixelColor(this->startingPixel+i, green, red, blue); // Set the pixel colour to the parsed colours (GRB)
-      }
-      
-    }
-};
-
 const uint32_t *const frames[] PROGMEM = {pixil_frame_0, pixil_frame_1, pixil_frame_2, pixil_frame_3};
 
-/*
-  A function which will write a frame to a squence of Neopixel lights, given a pixel to start at, an image to write (array of 0xRRGGBB values), the size of the image, and a NeoPixel object to write using 
-*/
-void write_frame(int startingPixel, const uint32_t* img, int img_len, Adafruit_NeoPixel& pixels) {
-
-  for (int i = 0; i < img_len; i++) {
-    uint32_t value = pgm_read_dword_near(&img[i]);
-    int red = (value & 0xff0000) >> 16;
-    int green = (value & 0x00ff00) >> 8;
-    int blue = (value & 0x0000ff);
-    Serial.println(i);
-    Serial.println(red);
-    Serial.println(green);
-    Serial.println(blue);
-    pixels.setPixelColor(startingPixel+i, green, red, blue);
-    // Serial.print(img[i]);
-    // Serial.print("Set pixel ");
-    // Serial.print(i);
-    // Serial.print(" to be: ");
-    // Serial.print((img[i] & 0xff0000) >> 16);
-    // Serial.print(", ");
-    // Serial.print((img[i] & 0x00ff00) >> 8);
-    // Serial.print(", ");
-    // Serial.println((img[i] & 0x0000ff));
-  }
-}
-
-Animation animation = Animation(strip, frames, 4);
+Animation animation = Animation(strip, frames, 4, FRAME_SIZE, NUM_FRAMES);
 
 void setup() {
   strip.begin();
   strip.setBrightness(10);
   // put your setup code here, to run once:
   strip.show();
-  //Serial.begin(9600);
+  Serial.begin(9600);
   
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  //Serial.print("Wrote at 0:");
-  //Serial.println((pixil_frame_0[0] & 0xff0000) >> 16);
-  //Serial.println((0xffffff & 0xff0000) >> 16);
-  // Stops working after 13 rows..... hmmm.....
-
-  //uint32_t* frame0 = (uint32_t*) pgm_read_ptr(&(frames[0]));
-  // write_frame(4, pixil_frame_0, 16*16, strip);
-  // strip.show();
-  // delay(500);
-
-  // write_frame(4, pixil_frame_1, 16*16, strip);
-  // strip.show();
-  // delay(500);
-
-  // write_frame(4, pixil_frame_2, 16*16, strip);
-  // strip.show();
-  // delay(500);
-
-  // write_frame(4, pixil_frame_3, 16*16, strip);
-  // strip.show();
-  // delay(500);
-  //uint32_t test = pgm_read_byte_near(&VALUES[1]);
-  //uint32_t test = pgm_read_dword_near(&pixil_frame_0[0]);
-  //Serial.println(test);
-
   animation.update();
   strip.show();
   delay(500);
