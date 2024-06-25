@@ -4,7 +4,7 @@
 #include <avr/pgmspace.h>         // Library for accessing program memory
 
 
-Animation::Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int startingPixel, int frameSize, int numFrames) {
+Animation::Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int numFrames, int frameSize, int startingPixel) {
   this->pixels = &p;
   this->numFrames = numFrames;
   frames = new uint32_t*[numFrames];
@@ -16,7 +16,7 @@ Animation::Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int starti
   this->frameSize = frameSize;
 }
 
-void Animation::update() {
+void Animation::writeNextFrame() {
       this->lastFrame++; // Increment the frame to display 
       if (this->lastFrame == this->numFrames) {
         this->lastFrame = 0;

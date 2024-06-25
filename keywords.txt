@@ -1,0 +1,2 @@
+Animation	KEYWORD1
+writeNextFrame	KEYWORD2
