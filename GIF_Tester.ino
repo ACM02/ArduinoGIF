@@ -1,10 +1,10 @@
 #include <Adafruit_NeoPixel.h>    // library of functions to control the LED strip
-#include <avr/pgmspace.h>
+#include <avr/pgmspace.h>         // Library for accessing program memory
 
 #define PIN 11                    // the pin the LED strip Data comes out
 #define numPixels 16*16+4             //  The length of the led strip
-#define NUM_FRAMES 4
-#define FRAME_SIZE 16*16
+#define NUM_FRAMES 4                  // The number of frames in the animation, should probably make this a property of the animation class
+#define FRAME_SIZE 16*16              // The size of the frames in the animation, should probably make this a property of the animation class too
 
 //  This describes the information the NeoPixel functions needs, then sets the values
 // Parameter 1 = number of pixels in strip
@@ -16,7 +16,7 @@
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(numPixels, PIN, NEO_RGB + NEO_KHZ800);
 
-// 16 x 16 all white image
+// Start of 16x16 frames, each is a 256 element array of 0x00RRGGBB values representing a pixel
 const uint32_t pixil_frame_0[] PROGMEM = {
   0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
   0x000000, 0x22b14c, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
@@ -92,40 +92,48 @@ const uint32_t pixil_frame_3[] PROGMEM = {
   0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000
 };
 
+// Class that handles animating a collection of frames using am Adafruit_NeoPixel object
 class Animation {
   private:
-    Adafruit_NeoPixel* pixels;
-    uint32_t* frames[NUM_FRAMES];
-    int startingPixel;
-    int lastFrame;
+    Adafruit_NeoPixel* pixels; // The NeoPixel object we will use to write to the lights
+    uint32_t* frames[NUM_FRAMES]; // An array of pointers to the frames in the animation 
+    int startingPixel; // The pixel in the NeoPixel to start drawing at (ex: 4 will skip the first 4 pixels)
+    int lastFrame; // The last frame we animated for this animation 
   public:
+
+    /*
+      Constructs an animation
+      PARAM p: An Adafruit_NeoPixel object to use to write to a light strip
+      PARAM f: An array in program memory of pointers to frames stored in program memory 
+      PARAM starting pixel: The pixel to start drawing at 
+    */
     Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int startingPixel) {
       this->pixels = &p;
       for (int i = 0; i < NUM_FRAMES; i++) {
-        frames[i] = pgm_read_ptr(&f[i]);
+        frames[i] = pgm_read_ptr(&f[i]); // Read the pointers to the frames from program memory, and store them in this object 
       }
       this->startingPixel = startingPixel;
       this->lastFrame=0;
     }
 
     void update() {
-      this->lastFrame++;
+      this->lastFrame++; // Increment the frame to display 
       if (this->lastFrame == NUM_FRAMES) {
         this->lastFrame = 0;
       }
       Serial.print("Frame:");
       Serial.println(lastFrame);
-      const uint32_t* img = frames[this->lastFrame];
-      for (int i = 0; i < FRAME_SIZE; i++) {
-        uint32_t value = pgm_read_dword_near(&img[i]);
-        int red = (value & 0xff0000) >> 16;
-        int green = (value & 0x00ff00) >> 8;
-        int blue = (value & 0x0000ff);
+      const uint32_t* img = frames[this->lastFrame]; // Get the pointer to the frame to display 
+      for (int i = 0; i < FRAME_SIZE; i++) { // Loop through the pixels in the frame
+        uint32_t value = pgm_read_dword_near(&img[i]); // Read the 32bit value in program memory representing a pixel
+        int red = (value & 0xff0000) >> 16; // Parse the red value in the pixel using a bit mask and bit shifting
+        int green = (value & 0x00ff00) >> 8; // Parse green
+        int blue = (value & 0x0000ff); // Parse blue
         Serial.println(i);
         Serial.println(red);
         Serial.println(green);
         Serial.println(blue);
-        this->pixels->setPixelColor(this->startingPixel+i, green, red, blue);
+        this->pixels->setPixelColor(this->startingPixel+i, green, red, blue); // Set the pixel colour to the parsed colours (GRB)
       }
       
     }
