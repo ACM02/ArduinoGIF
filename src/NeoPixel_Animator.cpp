@@ -14,6 +14,7 @@ Animation::Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int numFra
   this->startingPixel = startingPixel;
   this->lastFrame=0;
   this->frameSize = frameSize;
+  this->pixelMap = nullptr;
 }
 
 void Animation::writeNextFrame() {
@@ -31,9 +32,18 @@ void Animation::writeNextFrame() {
         // Serial.println(red);
         // Serial.println(green);
         // Serial.println(blue);
-        this->pixels->setPixelColor(this->startingPixel+i, green, red, blue); // Set the pixel colour to the parsed colours (GRB)
+        if (pixelMap == nullptr) {
+          this->pixels->setPixelColor(this->startingPixel+i, green, red, blue); // Set the pixel colour to the parsed colours (GRB)
+        } else {
+          this->pixels->setPixelColor(this->startingPixel+this->pixelMap[i], green, red, blue); // Set the pixel colour to the parsed colours (GRB)
+        }
+        
       }
       
+}
+
+void Animation::setPixelMap(int map[]) {
+  this->pixelMap = map;
 }
 
 Animation::~Animation() {

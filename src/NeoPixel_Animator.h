@@ -7,6 +7,7 @@ class Animation {
   private:
     Adafruit_NeoPixel* pixels; // The NeoPixel object we will use to write to the lights
     uint32_t** frames; // An array of pointers to the frames in the animation 
+    int* pixelMap;
     int startingPixel; // The pixel in the NeoPixel to start drawing at (ex: 4 will skip the first 4 pixels)
     int lastFrame; // The last frame we animated for this animation 
     int frameSize;
@@ -21,6 +22,7 @@ class Animation {
     */
     Animation(Adafruit_NeoPixel& p, const uint32_t* const f[], int numFrames, int frameSize, int startingPixel);
     void writeNextFrame();
+    void setPixelMap(int map[]);
     ~Animation();
 };
 #endif
